@@ -1,0 +1,3 @@
+[Project]
+Manager=KDevCustomMakeManager
+Name=rtos_sdk_2_1
