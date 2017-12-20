@@ -177,5 +177,8 @@ inclusive=0
 pattern=.hg
 targets=2
 
+[MakeBuilder]
+Default Target=all
+
 [Project]
 VersionControlSupport=

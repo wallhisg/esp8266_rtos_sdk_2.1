@@ -23,6 +23,7 @@
  */
 
 #include <espressif/esp_common.h>
+#include <freertos/portmacro.h>
 
 #define US_TO_RTC_TIMER_TICKS(t)          \
     ((t) ?          \

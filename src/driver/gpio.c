@@ -25,7 +25,7 @@
 #include "espressif/esp_common.h"
 #include "freertos/portmacro.h"
 
-#include <driver/gpio.h>
+#include "gpio.h"
 
 void gpio_config(GPIO_ConfigTypeDef *pGPIOConfig)
 {

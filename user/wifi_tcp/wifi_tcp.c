@@ -1,7 +1,7 @@
 /*
  * ESPRSSIF MIT License
  *
- * Copyright (c) 2015 <ESPRESSIF SYSTEMS (SHANGHAI) PTE LTD>
+ * Copyright (c) 2017 <ESPRESSIF SYSTEMS (SHANGHAI) PTE LTD>
  *
  * Permission is hereby granted for use on ESPRESSIF SYSTEMS ESP8266 only, in which case,
  * it is free of charge, to any person obtaining a copy of this software and associated
@@ -9,10 +9,10 @@
  * without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the Software is furnished
  * to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all copies or
  * substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -23,7 +23,11 @@
  */
 
 #include <espressif/esp_common.h>
+#include <wifi_tcp/wifi_state_machine.h>
 #include <driver/uart/uart.h>
+#include "wifi_tcp.h"
+
+static os_timer_t timer;
 
 /******************************************************************************
  * FunctionName : user_rf_cal_sector_set
@@ -73,6 +77,29 @@ uint32 user_rf_cal_sector_set(void)
 
     return rf_cal_sec;
 }
+
+LOCAL void ICACHE_FLASH_ATTR wait_for_connection_ready(uint8 flag)
+{
+    os_timer_disarm(&timer);
+    if(wifi_station_connected()){
+        os_printf("connected\n");
+    } else {
+        os_printf("reconnect after 2s\n");
+        os_timer_setfn(&timer, (os_timer_func_t *)wait_for_connection_ready, NULL);
+        os_timer_arm(&timer, 2000, 0);
+    }
+}
+
+LOCAL void ICACHE_FLASH_ATTR on_wifi_connect(){
+    os_timer_disarm(&timer);
+    os_timer_setfn(&timer, (os_timer_func_t *)wait_for_connection_ready, NULL);
+    os_timer_arm(&timer, 100, 0);
+}
+
+LOCAL void ICACHE_FLASH_ATTR on_wifi_disconnect(uint8_t reason){
+    os_printf("disconnect %d\n", reason);
+}
+
 /******************************************************************************
  * FunctionName : user_init
  * Description  : entry of user application, init user function here
@@ -81,7 +108,13 @@ uint32 user_rf_cal_sector_set(void)
 *******************************************************************************/
 void user_init(void)
 {
-    uart_init_new();
+//     uart_init_new();
+    uart_init();
     printf("SDK version:%s\n", system_get_sdk_version());
-}
 
+    set_on_station_connect(on_wifi_connect);
+    set_on_station_disconnect(on_wifi_disconnect);
+    init_esp_wifi();
+    stop_wifi_ap();
+    start_wifi_station(SSID, PASSWORD);
+}

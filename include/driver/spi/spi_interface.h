@@ -21,8 +21,8 @@
 #ifndef __SPI_INTERFACE_H__
 #define __SPI_INTERFACE_H__
 
-#include "spi_register.h"
-#include "c_types.h"
+#include <espressif/c_types.h>
+#include <driver/spi/spi_register.h>
 
 //*****************************************************************************
 //

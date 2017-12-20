@@ -8,11 +8,11 @@
  * Modification history:
  *     2014/3/12, v1.0 create this file.
 *******************************************************************************/
-#include <espressif/c_types.h>
-#include <espressif/esp8266/ets_sys.h>
+#include "c_types.h"
+#include "esp8266/ets_sys.h"
+#include "gpio.h"
 
-#include <driver/gpio.h>
-#include <driver/i2c_master.h>
+#include "i2c_master.h"
 
 LOCAL uint8 m_nLastSDA;
 LOCAL uint8 m_nLastSCL;
