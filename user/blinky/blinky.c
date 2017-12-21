@@ -23,11 +23,40 @@
  */
 
 #include <espressif/esp_common.h>
-#include <wifi_tcp/wifi_state_machine.h>
 #include <driver/uart/uart.h>
-#include "wifi_tcp.h"
+#include <driver/gpio/gpio.h>
+#include "blinky.h"
 
-static os_timer_t timer;
+#define LED_IO_PIN  GPIO_Pin
+
+uint32_t status;
+
+//Do blinky stuff
+void blinky(void *pvParameters)
+{
+
+
+    while(1)
+    {
+        // Delay and turn on
+
+        status = gpio_input_get();
+        status = status & GPIO_Pin_2;
+        if (status)
+        {
+            
+            GPIO_OUTPUT_SET (2, 0);
+            printf("status %x\r\n", status);
+        }
+        else
+        {
+            GPIO_OUTPUT_SET (2, 1);
+            printf("status %x\r\n", status);
+        }
+        vTaskDelay (500/portTICK_RATE_MS);
+    }
+    
+}
 
 /******************************************************************************
  * FunctionName : user_rf_cal_sector_set
@@ -78,28 +107,6 @@ uint32 user_rf_cal_sector_set(void)
     return rf_cal_sec;
 }
 
-LOCAL void ICACHE_FLASH_ATTR wait_for_connection_ready(uint8 flag)
-{
-    os_timer_disarm(&timer);
-    if(wifi_station_connected()){
-        os_printf("connected\n");
-    } else {
-        os_printf("reconnect after 2s\n");
-        os_timer_setfn(&timer, (os_timer_func_t *)wait_for_connection_ready, NULL);
-        os_timer_arm(&timer, 2000, 0);
-    }
-}
-
-LOCAL void ICACHE_FLASH_ATTR on_wifi_connect(){
-    os_timer_disarm(&timer);
-    os_timer_setfn(&timer, (os_timer_func_t *)wait_for_connection_ready, NULL);
-    os_timer_arm(&timer, 100, 0);
-}
-
-LOCAL void ICACHE_FLASH_ATTR on_wifi_disconnect(uint8_t reason){
-    os_printf("disconnect %d\n", reason);
-}
-
 /******************************************************************************
  * FunctionName : user_init
  * Description  : entry of user application, init user function here
@@ -110,10 +117,10 @@ void user_init(void)
 {
     uart_init();
     printf("SDK version:%s\n", system_get_sdk_version());
+    
+    //Set GPIO2 to output mode
+    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO2_U, FUNC_GPIO2);
 
-    set_on_station_connect(on_wifi_connect);
-    set_on_station_disconnect(on_wifi_disconnect);
-    init_esp_wifi();
-    stop_wifi_ap();
-    start_wifi_station(SSID, PASSWORD);
+    xTaskCreate(blinky, (signed char*)"blinky", 256, NULL, 2, NULL);
+
 }

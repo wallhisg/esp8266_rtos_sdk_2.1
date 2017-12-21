@@ -12,7 +12,7 @@ Name=GCC
 
 [CustomDefinesAndIncludes][ProjectPath0][Includes]
 1=/home/wall/Dropbox/IoT/GateWay/Esp8266/rtos_sdk_2_1/include
-2=/opt/Espressif/ESP8266_RTOS_SDK/include
+2=/opt/Espressif/ESP8266_RTOS_SDK_2_1/include
 
 [Filters]
 size=32

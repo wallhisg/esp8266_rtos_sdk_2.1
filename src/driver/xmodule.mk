@@ -1,5 +1,5 @@
 LOCAL_BASE	:= src
-LOCAL_MDLS	:= driver/uart driver/spi
+LOCAL_MDLS	:= driver/uart driver/spi driver/gpio
 LOCAL_BLDS	:= $(addprefix $(LOCAL_BASE)/, $(LOCAL_MDLS))
 LOCAL_INCS	:= $(wildcard $(INCLUDE_DIRS)/$(LOCAL_MDLS)/*.h)
 

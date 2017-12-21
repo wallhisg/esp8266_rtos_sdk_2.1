@@ -14,7 +14,7 @@ DEPS		:=
 #======================================================================
 # which modules (subdirectories) of the project to include in compiling
 # Add new here
-MODULES		= src/driver src/wifi_tcp
+MODULES		= src/driver src/event src/wifi_tcp
 EXTRA_INCDIR    = include
 
 #======================================================================
@@ -35,7 +35,9 @@ include ./Enviroment.mk
 # Current Project
 #include ./user/tcp_api/xmodule.mk
 #include ./user/smart_config/xmodule.mk
-include ./user/wifi_tcp/xmodule.mk
+#include ./user/wifi_tcp/xmodule.mk
+include ./user/blinky/xmodule.mk
+
 #include ./user/GPIO/xmodule.mk
 # *********************************************************************
 
