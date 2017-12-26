@@ -28,7 +28,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
 #include <espressif/esp8266/gpio_register.h>
     
 #define GPIO_Pin_0              (BIT(0))  /* Pin 0 selected */
@@ -293,6 +293,7 @@ void gpio_pin_intr_state_set(uint32 i, GPIO_INT_TYPE intr_state);
   * @return  bitmask of GPIO pins input 
   */
 uint32 gpio_input_get(void);
+
 
 /**
   * @}

@@ -23,8 +23,9 @@
  */
 
 #include <espressif/esp_common.h>
-#include <driver/uart/uart.h>
-#include <driver/gpio/gpio.h>
+#include <driver/gpio/gpio_event.h>
+#include <driver/uart/uart_event_func.h>
+#include <event/event_manager.h>
 #include "blinky.h"
 
 #define LED_IO_PIN  GPIO_Pin
@@ -38,26 +39,22 @@ void blinky(void *pvParameters)
 
     while(1)
     {
-        // Delay and turn on
 
-        status = gpio_input_get();
-        status = status & GPIO_Pin_2;
-        if (status)
-        {
-            
-            GPIO_OUTPUT_SET (2, 0);
-            printf("status %x\r\n", status);
-        }
-        else
-        {
-            GPIO_OUTPUT_SET (2, 1);
-            printf("status %x\r\n", status);
-        }
-        vTaskDelay (500/portTICK_RATE_MS);
+        gpio_get_events();
+//         uart_get_events();
+        vTaskDelay (50/portTICK_RATE_MS);
     }
     
 }
 
+void per_event_handler(void *pvParameters)
+{
+    while(1)
+    {
+        peripheral_post_event();
+        vTaskDelay (500/portTICK_RATE_MS);
+    }
+}
 /******************************************************************************
  * FunctionName : user_rf_cal_sector_set
  * Description  : SDK just reversed 4 sectors, used for rf init data and paramters.
@@ -116,11 +113,13 @@ uint32 user_rf_cal_sector_set(void)
 void user_init(void)
 {
     uart_init();
+    system_event_init();
     printf("SDK version:%s\n", system_get_sdk_version());
     
     //Set GPIO2 to output mode
     PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO2_U, FUNC_GPIO2);
 
     xTaskCreate(blinky, (signed char*)"blinky", 256, NULL, 2, NULL);
+    xTaskCreate(per_event_handler, (signed char*)"peripheral_event_handler", 256, NULL, 2, NULL);
 
 }

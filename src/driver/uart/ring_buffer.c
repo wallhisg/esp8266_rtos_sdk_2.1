@@ -38,6 +38,8 @@ void ringbuff_rx_write_one_byte(const uint8_t byte)
     if (ringbuff_rx.tail == ringbuff_rx.head)
     {
         ringbuff_rx.status = RING_BUF_FULL;
+//         peripheral_add_event()
+        
     }
     printf("byte: %c", byte);
 }

@@ -1,10 +1,8 @@
 #ifndef _RING_BUFFER_H_
 #define _RING_BUFFER_H_
 
-#include <espressif/c_types.h>
 #include <stdio.h>
-
-extern void system_regist_event();
+#include <espressif/c_types.h>
 
 #define LF      0x0A    //  '\n'
 #define CR      0x0D    //  '\r'

@@ -2,9 +2,14 @@
 
 void system_event_init(void)
 {
-    peripheral_event_init();
+    gpio_event_init();
 }
 void system_regist_event()
 {
     
+}
+
+void system_post_event(void)
+{
+    peripheral_post_event();
 }

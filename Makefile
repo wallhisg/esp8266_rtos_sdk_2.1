@@ -72,6 +72,10 @@ flash: $(FW_FILE_1) $(FW_FILE_2)
 
 clean:
 	$(Q) rm -rf $(FW_BASE) $(OBJS) $(DEPS) $(APP_AR) $(TARGET_OUT)
+	
+git: clean
+	git push -u origin master
+	
 #======================================================================
 checkdirs: $(BUILD_DIR) $(FW_BASE)
 

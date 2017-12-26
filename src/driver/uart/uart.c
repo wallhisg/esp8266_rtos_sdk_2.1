@@ -28,7 +28,7 @@
 #include <freertos/queue.h>
 
 #include <driver/uart/uart.h>
-#include <driver/uart/ring_buffer.h>
+
 
 enum {
     UART_EVENT_RX_CHAR,
